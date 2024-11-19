@@ -54,7 +54,7 @@ disable-swap() {
         sudo swapoff -a
 
         # Comment out the swap entry in /etc/fstab to disable it permanently
-        sudo sed -i '/swap/ s/^/#/' /etc/fstab
+        sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
         echo "Swap has been disabled and commented out in /etc/fstab."
     else
@@ -137,10 +137,8 @@ install-k8s() {
   else
     print_info "Installing Kubernetes components (kubectl, kubeadm, kubelet) ..."
     sudo apt-get update
-    # apt-transport-https may be a dummy package; if so, you can skip that package
     sudo apt-get install -y apt-transport-https ca-certificates curl gpg
     curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-    # This overwrites any existing configuration in /etc/apt/sources.list.d/kubernetes.list
     echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
 
     sudo apt-get update
@@ -178,7 +176,7 @@ create-k8s-cluster() {
   fi
 }
 
-# Install Flannel as CNI
+# Install Calico as CNI
 install-cni() {
   if kubectl get pods -n kube-system -l app=calico | grep -q '1/1'; then
     print_info "Calico is already running. Skipping installation."
