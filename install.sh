@@ -182,7 +182,7 @@ install-cni() {
     print_info "Calico is already running. Skipping installation."
   else
     print_info "Installing Calico as primary CNI ..."
-    kubectl apply -f kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/calico.yaml
+    kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.1/manifests/calico.yaml
     timer-sec 10
     kubectl wait pods -n kube-system -l app=calico --for condition=Ready --timeout=120s
   fi
